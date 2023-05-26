@@ -11,6 +11,9 @@ const nextConfig = {
       config.resolve.fallback = { fs: false, net: false, tls: false };
       return config;
     },
+    images:{
+        domains:['www.nike.com','static.nike.com'],
+    },
   };
   
   module.exports = nextConfig;

@@ -1,14 +1,4 @@
-import mysql from 'mysql2/promise';
-
-const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'bootbootshop',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+import db from '../db'
 
 type fetchData = {
     id:number;
@@ -24,7 +14,7 @@ type fetchData = {
 export default async function handler(req:fetchData, res:any) {
     
   try {
-    const [rows, fields] = await pool.query('SELECT * FROM shop');
+    const [rows, fields] = await db.query('SELECT * FROM shop WHERE quantity > 0');
     res.status(200).json(rows);
   } catch (error) {
     console.error(error);
