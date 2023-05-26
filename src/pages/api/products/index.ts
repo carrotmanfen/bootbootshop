@@ -1,5 +1,5 @@
 import mysql from 'mysql2/promise';
-
+import db from '../db'
 
 type fetchData = {
     id:number;
