@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import React from "react";
-import {logo} from "@/assets";
+import {logo,pictest} from "@/assets";
 import Image from 'next/image';
 
 type fetchData = {
@@ -27,6 +27,45 @@ const ShopPage:React.FC = () => {
   useEffect(() => {
     fetchProducts();
   }, []);
+
+  const testData =[
+    {
+      "id": 1,
+      "picture" : "sdasd",
+      "name": "nike asd",
+      "cost": 2300
+    },
+    {
+      "id": 2,
+      "picture" : "sdasd",
+      "name": "nike asd",
+      "cost": 2300
+    },
+    {
+      "id": 3,
+      "picture" : "sdasd",
+      "name": "nike asd",
+      "cost": 2300
+    },
+    {
+      "id": 4,
+      "picture" : "sdasd",
+      "name": "nike asd",
+      "cost": 2300
+    },
+    {
+      "id": 5,
+      "picture" : "sdasd",
+      "name": "nike asd",
+      "cost": 2300
+    },
+    {
+      "id": 6,
+      "picture" : "sdasd",
+      "name": "nike asd",
+      "cost": 2300
+    },
+  ]
 
   const buyProduct = async (product: any) => {
     //web 3
@@ -54,19 +93,29 @@ const ShopPage:React.FC = () => {
             </div>
           </div>
         </nav>
+        <div className="grid grid-cols-4 gap-8 mx-24 mt-8">
 
-        {products.map((p: fetchData) => {
-          return (
-            <div key={p.id} style={{ paddingTop: "20px" }}>
-              <h2>{p.name}</h2>
-              <p>{p.cost}</p>
-              <p>{p.picture}</p>
+          {/* {products.map((p: fetchData) => { */}
+            {testData.map((p: any) => {
+            return (
+              
               <Link href={`shop/${p.id}`}>
-                      <button>Buy</button>
+
+                <div className="border-2 rounded-lg" key={p.id} >
+                  {/* <p>{p.picture}</p> */}
+                  <Image className="object-contain rounded-t-lg" src={pictest} alt={String(p.id)}></Image>
+                  <div className="text-[24px] flex-row flex justify-between m-4">
+                    <p className="">{p.name}</p>
+                    <p>{p.cost+" ฿"}</p>
+                  </div>
+                          
+                </div>
+
               </Link>
-            </div>
-          );
-        })}
+              
+            );
+          })}
+        </div>
       </div>
     </>
   );
