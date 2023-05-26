@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import React from "react";
-import {logo} from "@/assets";
 import Image from 'next/image';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import Navbar from "@/components/Nav";
 
 type fetchData = {
     id:number;
@@ -38,23 +37,8 @@ const ShopPage:React.FC = () => {
   return (
     <>
       <div className="min-h-screen bg-white">
-        <nav className="relative flex flex-wrap items-center justify-between px-2 py-0 bg-gradient-to-t from-neutral-300 mb-3">
-          <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
-            <div className="flex-row w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
-              <a
-                className="flex items-center text-sm font-bold text-[24px] tracking-wide leading-relaxed inline-block mr-4 py-0 whitespace-nowrap text-black "
-                href="#HHH"
-              >
-                <Image className='mr-[6px]' src={logo} width={100} height={100} alt="Logo of Bootbootshop"/>
-                Bootbootshop
-              </a>
-              
-            </div>
-            <div>
-              <ConnectButton/>
-            </div>
-          </div>
-        </nav>
+        
+        <Navbar/>
         <div className="grid grid-cols-4 gap-8 mx-24 mt-8">
 
           {products.map((p: fetchData) => {
@@ -64,7 +48,7 @@ const ShopPage:React.FC = () => {
 
                 <div className="border-2 rounded-lg" key={p.id} >
                   {/* <p>{p.picture}</p> */}
-                  <Image className="object-contain rounded-t-lg" src={`${p.picture}`} width={400} height={400} alt={String(p.id)}></Image>
+                  <Image className="object-contain rounded-t-lg" src={`${p.picture}`} width={450} height={450} alt={String(p.id)}></Image>
                   <div className="text-[24px] flex-row flex justify-between m-4">
                     <p className="truncate overflow-hidden w-64">{p.name}</p>
                     <p>{p.cost+" ฿"}</p>

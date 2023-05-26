@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation'
 import { useState, useEffect } from "react";
 import Image from 'next/image';
 import axios from 'axios';
+import Navbar from '@/components/Nav';
 
 type itemData = {
     id:number;
@@ -73,27 +74,27 @@ const ProductPage = () => {
   }else{
       return (
         <div>
-          <h1>Product {id}</h1>
-          {product.map((p: itemData) => {
-          return (
-              <div key={p.id} style={{ paddingTop: "20px" }}>
-                <h2>{p.name}</h2>
-                <p>{p.description}</p>
-                <p>{p.quantity}</p>
-                <p>{p.cost}</p>
-                <p>{p.size}</p>
-                <p>{p.color}</p>
+            <Navbar/>
+            {product.map((p: itemData) => {
+            return (
+                <div key={p.id} className='pt-[20px] flex flex-row justify-center items-center'>
+                    <Image
+                    className=""
+                    src={`${p.picture}`}
+                    width={600}
+                    height={600}
+                    alt={`${p.id}`}/>
+                    <div className='border-2 flex flex-col w-[600px] h-[750px] justify-center text-6xl text-center'>
+                        <h2 className=''>{p.name}</h2>
+                        <p className='text-xl mb-12'>{p.description}</p>
+                        <p>{p.quantity}</p>
+                        <p>{p.cost}</p>
+                        <p>{p.size}</p>
+                        <p>{p.color}</p>
+                        <button onClick={handleBuyProduct}>Buy</button>
+                    </div>
                 
-                <Image
-                className=""
-                src={`${p.picture}`}
-                width={400}
-                height={400}
-                alt={`${p.id}`}
-              />
-              
-                <button onClick={handleBuyProduct}>Buy</button>
-              </div>
+                </div>
             );
           })}
         </div>
