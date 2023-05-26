@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import React from "react";
 import {logo,pictest} from "@/assets";
 import Image from 'next/image';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 type fetchData = {
     id:number;
@@ -89,7 +90,7 @@ const ShopPage:React.FC = () => {
               
             </div>
             <div>
-              Wait for Smart contact
+              <ConnectButton/>
             </div>
           </div>
         </nav>

@@ -1,7 +1,7 @@
 // pages/api/[id].ts
 
 import { NextApiRequest, NextApiResponse } from 'next'
-import mysql from 'mysql2/promise'
+import db from '../db'
 
 type fetchData = {
     id:number;
@@ -14,17 +14,6 @@ type fetchData = {
     picture:string;
  }
 
-const pool = mysql.createPool({
-    host: 'localhost',
-    port: 3307 ,
-    user: 'root',
-    password: '',
-    database: 'bootbootshop',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-  });
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse<fetchData | { message: string }>) {
   const { id } = req.query
 
@@ -34,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   }
 
   try {
-    const connection = await pool.getConnection()
+    const connection = await db.getConnection()
 
     const [rows] = await connection.query<any>(`SELECT * FROM shop WHERE id = ${Number(id)}`)
 
