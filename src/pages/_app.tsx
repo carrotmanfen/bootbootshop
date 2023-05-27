@@ -4,6 +4,7 @@ import type { AppProps } from 'next/app'
 import '@rainbow-me/rainbowkit/styles.css';
 import {
   getDefaultWallets,
+  lightTheme,
   RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
@@ -35,7 +36,13 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     
     <WagmiConfig config={wagmiConfig}>
-    <RainbowKitProvider chains={chains}>
+    <RainbowKitProvider chains={chains} theme={lightTheme({
+        accentColor: '#000000',
+        accentColorForeground: 'white',
+        borderRadius: 'medium',
+        fontStack: 'system',
+      })}
+      >
         <Component {...pageProps} />
       
     </RainbowKitProvider>

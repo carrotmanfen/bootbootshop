@@ -5,12 +5,12 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const Navbar = () => {
   return (
-    <nav className="relative flex flex-wrap items-center justify-between px-2 py-0 bg-gradient-to-t from-neutral-300 mb-3">
-          <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
+    <nav className="relative flex items-center justify-between bg-gradient-to-t from-neutral-300 mb-3">
+          <div className="container mx-auto flex flex-wrap items-center justify-between">
             <div className="flex-row w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
               <a
-                className="flex items-center text-sm font-bold text-[24px] tracking-wide leading-relaxed inline-block mr-4 py-0 whitespace-nowrap text-black "
-                href="#HHH"
+                className="flex items-center text-3xl font-bold tracking-wide leading-relaxed py-0 whitespace-nowrap text-black "
+                href="/shop"
               >
                 <Image className='mr-[6px]' src={logo} width={100} height={100} alt="Logo of Bootbootshop"/>
                 Bootbootshop
