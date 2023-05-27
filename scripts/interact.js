@@ -5,7 +5,7 @@ const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
 const contract = require("../artifacts/contracts/Shop.sol/Shop.json");
 
 // provider - Alchemy
-const alchemyProvider = new ethers.providers.AlchemyProvider(network="ropsten", API_KEY);
+const alchemyProvider = new ethers.providers.AlchemyProvider(network="goerli", API_KEY);
 
 // signer - you
 const signer = new ethers.Wallet(PRIVATE_KEY, alchemyProvider);
@@ -18,7 +18,7 @@ async function main() {
     console.log("The message is: " + message); 
 
     console.log("Updating the message...");
-    const tx = await shopContract.update("this is the new message");
+    const tx = await shopContract.update("Thank you for shopping at Bootbootshop.");
     await tx.wait();
 
     const newMessage = await shopContract.message();
