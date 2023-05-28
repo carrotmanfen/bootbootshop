@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import axios from 'axios';
 import Navbar from '@/components/Nav';
+import useBalance from '@/hook/useBalance';
+import { useAccount } from 'wagmi';
 
 type ItemData = {
   id: number;
@@ -18,7 +20,10 @@ type ItemData = {
 const ProductPage: React.FC = () => {
   const [product, setProduct] = useState<ItemData[]>([]);
   const [productId, setProductId] = useState<string>('');
-  const [address, setAddress] = useState<string>('');
+  const [addressFrom, setAddressFrom] = useState<string>('');
+  const {address} = useAccount();
+  const {data} = useBalance(address?address:"");
+
   const router = useRouter();
   const { id } = router.query;
 
@@ -63,7 +68,7 @@ const ProductPage: React.FC = () => {
     }, []);
 
     const handleBuyProduct = async () => {
-        if(address===''){
+        if(addressFrom===''){
             window.alert("Please fill your address");
         }else{
             try {
@@ -76,7 +81,7 @@ const ProductPage: React.FC = () => {
             }
       
             try {
-              const response = await axios.post('http://localhost:3000/api/history/createHistory', { productId, address });
+              const response = await axios.post('http://localhost:3000/api/history/createHistory', { productId, addressFrom });
               console.log(response.data);
               // Handle success or display a success message
             } catch (error) {
@@ -96,10 +101,10 @@ const ProductPage: React.FC = () => {
             type="text"
             className='bg-gray-300 flex w-full mt-8 p-2 rounded-xl text-xl text-black'
             placeholder='address'
-            value={address}
+            value={addressFrom}
             ref={inputRef} // Assign the ref to the input field
             onChange={(e) => {
-              setAddress(e.target.value);
+              setAddressFrom(e.target.value);
             }}
           />
           <div className='flex justify-between mx-6 mt-10 text-2xl font-semibold'>
@@ -121,6 +126,10 @@ const ProductPage: React.FC = () => {
     return (
       <div className='relative'>
         <Navbar />
+        <div>
+          <p>Account : {address?(address as string):""}</p>
+          <p>Balance : {data?String(data as Number):""}</p>
+        </div>
         {product.map((p: ItemData) => {
           return (
             <div key={p.id} className="pt-[20px] flex flex-row justify-center items-center">

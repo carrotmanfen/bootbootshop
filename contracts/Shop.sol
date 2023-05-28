@@ -19,6 +19,21 @@ contract Shop {
         }
         return false;
     }
+
+    function deposit(uint256 _amount) public {
+        require(_amount > 0);
+        if (!isAccount(msg.sender)) {
+            account.push(msg.sender);
+        }
+        accountBalance[msg.sender] += _amount;
+    }
+
+     function withdraw(uint256 _amount) public {
+        require(_amount > 0);
+        require(isAccount(msg.sender));
+        require(accountBalance[msg.sender] >= _amount);
+        accountBalance[msg.sender] -= _amount;
+    }
     
     function transferTo(address _to, uint256 _amount) public {
         require(_amount > 0);
