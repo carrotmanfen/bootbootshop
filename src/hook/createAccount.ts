@@ -3,7 +3,7 @@ import ShopABI from "../abis/Shop.json"
 
 const createAccount = (name:string )=>{
     const {config} = usePrepareContractWrite({
-        address: "0x8A0EE719321D68b182979a82d497Ec63A0fBD863",
+        address: "0x31f31e8440C202A49CD77Cf2bD10e37fE01b1FA5",
         abi: ShopABI,
         functionName:"createAccount",
         args:[name],

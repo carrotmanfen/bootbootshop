@@ -7,6 +7,7 @@ import Register from '@/components/Register';
 import useBalance from '@/hook/useBalance';
 import getAccountName from '@/hook/getAccountName';
 import { useAccount } from 'wagmi';
+import isAccount from '@/hook/isAccount';
 
 type ItemData = {
   id: number;
@@ -26,7 +27,7 @@ const ProductPage: React.FC = () => {
   const {address} = useAccount();
   const {data} = useBalance(address?address:"");
   const {data:accountName} = getAccountName(address?address:"");
-  const isRegister = accountName!=undefined?true:false;
+  const {data:isRegister}=isAccount(address?address:"");
 
   const router = useRouter();
   const { id } = router.query;

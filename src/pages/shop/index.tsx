@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Navbar from "@/components/Nav";
 import Register from '@/components/Register';
 import useBalance from '@/hook/useBalance';
+import isAccount from "@/hook/isAccount";
 import getAccountName from '@/hook/getAccountName';
 import { useAccount } from 'wagmi';
 
@@ -22,9 +23,10 @@ type fetchData = {
 const ShopPage:React.FC = () => {
   const [products, setProducts] = useState([]);
   const {address} = useAccount();
-  const {data:accountName} = getAccountName(address?address:"");
-  const isRegister = accountName!=undefined?true:false;
-
+  const {data:accountName,isSuccess} = getAccountName(address?address:"");
+  console.log(accountName);
+  const {data:isRegister}=isAccount(address?address:"");
+  
   const fetchProducts = async () => {
     const response = await fetch("http://localhost:3000/api/products");
     const data = await response.json();
@@ -46,7 +48,10 @@ const ShopPage:React.FC = () => {
       <div className="min-h-screen bg-white">
         
         <Navbar/>
-        {!isRegister && <Register/>}
+        <div className={`${isRegister?"hidden":"block"}`}>
+
+            <Register/>
+        </div>
         <div className="grid grid-cols-4 gap-8 mx-24 mt-8">
           {products.map((p: fetchData) => {
             return (

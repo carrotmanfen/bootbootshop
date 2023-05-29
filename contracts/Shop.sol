@@ -12,6 +12,13 @@ contract Shop {
         accountName[msg.sender]=name;
     }
 
+    function isAccount(address _account) public view returns (bool) {
+        if (bytes(accountName[_account]).length>0) {
+            return true;
+        } 
+        return false;
+    }
+
     function getAccountName(address _account) public view returns (string memory){
         return accountName[_account];
     }
