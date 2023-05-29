@@ -6,33 +6,26 @@ contract Shop {
     mapping(address => string) private accountName;
     address[] public account;
 
-    function createAccount(address _address) public {
-        require(!isAccount(_address));
-        account.push(_address);
+    function createAccount(string memory name) public {
+        require(bytes(name).length > 0 ,"Error name = 0");
+        require(bytes(accountName[msg.sender]).length ==0, "Error already have account");
+        accountName[msg.sender]=name;
     }
 
-    function isAccount(address _account) public view returns (bool) {
-        for (uint256 i = 0; i < account.length; i++) {
-            if (account[i] == _account) {
-                return true;
-            }
-        }
-        return false;
+    function getAccountName(address _account) public view returns (string memory){
+        return accountName[_account];
     }
 
-    function deposit(uint256 _amount) public {
-        require(_amount > 0);
-        if (!isAccount(msg.sender)) {
-            account.push(msg.sender);
-        }
-        accountBalance[msg.sender] += _amount;
+    function deposit() public payable{
+        require(bytes(accountName[msg.sender]).length >0 ,"Error : Account nnot register");
+        accountBalance[msg.sender] += msg.value;
     }
 
-     function withdraw(uint256 _amount) public {
-        require(_amount > 0);
-        require(isAccount(msg.sender));
-        require(accountBalance[msg.sender] >= _amount);
-        accountBalance[msg.sender] -= _amount;
+    function withdraw() public {
+        require(accountBalance[msg.sender] > 0, "Error: Insufficient balance");
+        uint256 amount = accountBalance[msg.sender];
+        accountBalance[msg.sender] = 0;
+        payable(msg.sender).transfer(amount);
     }
     
     function transferTo(address _to, uint256 _amount) public {
@@ -45,5 +38,9 @@ contract Shop {
     function balanceOf(address _account) public view returns (uint256) {
         return accountBalance[_account];
     }
+
+    function checkBalance() public view returns (uint256) {
+    return address(this).balance;
+}
 
 }
