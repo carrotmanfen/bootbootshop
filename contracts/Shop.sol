@@ -17,7 +17,7 @@ contract Shop {
     }
 
     function deposit() public payable{
-        require(bytes(accountName[msg.sender]).length >0 ,"Error : Account nnot register");
+        require(bytes(accountName[msg.sender]).length >0 ,"Error : Account not register");
         accountBalance[msg.sender] += msg.value;
     }
 
