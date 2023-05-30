@@ -3,14 +3,14 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 type historyData = {
     productId:number;
-    address:string;
+    addressFrom:string;
  }
 
  export default async function createHandler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
-            const {productId,address} = req.body;
-            await db.query('INSERT INTO history(product_id, address) VALUES (?,?)',[Number(productId),String(address)] )as unknown as historyData[];
+            const {productId,addressFrom} = req.body;
+            await db.query('INSERT INTO history(product_id, address) VALUES (?,?)',[Number(productId),String(addressFrom)] )as unknown as historyData[];
             res.status(200).json({ message: 'Data inserted successfully' });
         } catch (error) {
             console.error(error);
