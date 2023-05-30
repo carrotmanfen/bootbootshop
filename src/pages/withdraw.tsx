@@ -7,7 +7,7 @@ import useBalance from '@/hook/useBalance';
 import isAccount from "@/hook/isAccount";
 import getAccountName from '@/hook/getAccountName';
 import { useAccount } from 'wagmi';
-import useDeposit from "@/hook/useDeposit";
+import useWithdraw from "@/hook/useWithdraw";
  
 const Withdraw:React.FC = () => {
   
@@ -16,7 +16,7 @@ const Withdraw:React.FC = () => {
   const {data:accountName} = getAccountName(address?address:"");
   const {data:isRegister}=isAccount(address?address:"");
   const [amount,setAmount] = useState("");
-
+  const {write:getMoneyOff,data:Money} = useWithdraw(amount?Number(amount):0);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAmount(e.target.value);
   };
