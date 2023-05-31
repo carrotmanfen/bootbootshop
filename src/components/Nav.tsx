@@ -10,7 +10,7 @@ const Navbar = () => {
             <div className="flex-row w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
               <a
                 className="flex items-center text-3xl font-bold tracking-wide leading-relaxed py-0 whitespace-nowrap text-black "
-                href="/shop"
+                href="/"
               >
                 <Image className='mr-[6px]' src={logo} width={100} height={100} alt="Logo of Bootbootshop"/>
                 Bootbootshop

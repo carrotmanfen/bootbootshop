@@ -16,7 +16,7 @@ const Withdraw:React.FC = () => {
   const {data:accountName} = getAccountName(address?address:"");
   const {data:isRegister}=isAccount(address?address:"");
   const [amount,setAmount] = useState("");
-  const {write:getMoneyOff,data:Money} = useWithdraw(amount?Number(amount):0);
+  const {write:getMoneyOff,data:Money} = useWithdraw();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAmount(e.target.value);
   };
@@ -26,11 +26,12 @@ const Withdraw:React.FC = () => {
     if(address != undefined){
 
       if(String(amount).length>0){
-        //   if(addMoney){
-        //       addMoney();
+           if(getMoneyOff){
+               getMoneyOff();
               
-        //   }
-          window.alert("add money");
+           }
+          window.alert("get money off");
+          
       }else{
           window.alert("Please fill your money");
       }
