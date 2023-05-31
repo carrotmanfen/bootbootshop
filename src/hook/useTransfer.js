@@ -1,13 +1,14 @@
 import { useContractWrite,usePrepareContractWrite } from "wagmi";
 import ShopABI from "../abis/Shop.json"
 import { parseEther } from "viem";
+import addressContract from "../../contracts/addressContract";
 
-const useTransfer = (address, amount)=>{
+const useTransfer = (_to, amount)=>{
     const {config} = usePrepareContractWrite({
-        address: "0x31f31e8440C202A49CD77Cf2bD10e37fE01b1FA5",
+        address: addressContract,
         abi: ShopABI,
         functionName:"transferTo",
-        args:[address,parseEther(amount, 18)],
+        args:[_to,parseEther(amount, 18)],
     });
 
     const {data, isLoading, isError, write} = useContractWrite(config);

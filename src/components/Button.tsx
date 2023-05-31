@@ -8,7 +8,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 const Button: React.FC<ButtonProps> = ({ onClick, children, className}) => {
   return (
     <button
-      className={`bg-gray-500 hover:bg-black text-white text-5xl font-bold py-8 px-16 rounded-3xl ${className}`}
+      className={`bg-neutral-300 hover:bg-black hover:text-white text-black text-center text-3xl font-semibold py-4  w-[350px] rounded-3xl ${className}`}
       onClick={onClick}
       
     >

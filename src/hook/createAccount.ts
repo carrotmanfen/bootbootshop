@@ -1,9 +1,10 @@
 import { useContractWrite,usePrepareContractWrite } from "wagmi";
 import ShopABI from "../abis/Shop.json"
+import addressContract from "../../contracts/addressContract";
 
 const createAccount = (name:string )=>{
     const {config} = usePrepareContractWrite({
-        address: "0x31f31e8440C202A49CD77Cf2bD10e37fE01b1FA5",
+        address: addressContract,
         abi: ShopABI,
         functionName:"createAccount",
         args:[name],

@@ -3,12 +3,12 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import axios from 'axios';
 import Navbar from '@/components/Nav';
-import Register from '@/components/Register';
 import useBalance from '@/hook/useBalance';
 import getAccountName from '@/hook/getAccountName';
 import { useAccount } from 'wagmi';
 import isAccount from '@/hook/isAccount';
 import useTransfer from '@/hook/useTransfer.js';
+import addressContract from "../../contracts/addressContract";
 
 type ItemData = {
     id: number;
@@ -29,7 +29,9 @@ const ProductPage: React.FC = () => {
     const { data } = useBalance(address ? address : "");
     const { data: accountName } = getAccountName(address ? address : "");
     const { data: isRegister } = isAccount(address ? address : "");
-    const { write: transfer, data: dataTransfer } = useTransfer("0x3AaEe3cF4DefAb8D33d2961fc7b7e50fFfa5817C", "0.00001");
+    const _to = addressContract;
+    const [amount, setAmount] = useState("");
+    const { write: transfer, data: dataTransfer } = useTransfer(_to, amount);
 
     const router = useRouter();
     const { id } = router.query;
@@ -42,6 +44,8 @@ const ProductPage: React.FC = () => {
         console.log('data is' + data);
         setProduct(data);
         setProductId(String(id));
+        setAmount(String(data[0].cost));
+        console.log(amount);
     };
 
     React.useEffect(() => {
@@ -135,23 +139,20 @@ const ProductPage: React.FC = () => {
         return (
             <div className='relative'>
                 <Navbar />
-                <div>
-                </div>
-                {!isRegister && <Register />}
                 {product.map((p: ItemData) => {
                     return (
-                        <div key={p.id} className={`pt-[20px] ${isRegister ? "flex" : "hidden"} flex-row justify-center items-center `}>
+                        <div key={p.id} className={`pt-[20px] flex flex-row justify-center items-center `}>
                             <Image className="mr-40" src={`${p.picture}`} width={600} height={600} alt={`${p.id}`} />
                             <div className="p-8 flex flex-col w-[600px] h-[750px] justify-center text-4xl text-left">
                                 <h2 className="mb-4 font-bold">{p.name}</h2>
                                 <p className="text-2xl mb-12 text-gray-500 font-semibold">{p.description}</p>
-                                <p className="font-bold text-3xl mb-10">{p.cost} ETH</p>
+                                <p className="font-bold text-3xl mb-10" >{p.cost} ETH</p>
                                 <p className="text-3xl font-semibold text-gray-500 mb-4">Size : {p.size}</p>
                                 <p className="text-3xl font-semibold text-gray-500 mb-4">Color : {p.color}</p>
                                 <p className="text-3xl font-semibold text-gray-500 mb-20">Quantity : {p.quantity}</p>
                                 <button
                                     onClick={showAlert}
-                                    className="pt-4 pb-6 mx-20 rounded-3xl bg-black text-white font-bold"
+                                    className="pt-4 pb-6 rounded-3xl bg-black text-white font-bold"
                                 >
                                     Buy
                                 </button>
