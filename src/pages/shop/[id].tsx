@@ -3,8 +3,11 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import axios from 'axios';
 import Navbar from '@/components/Nav';
+import Register from '@/components/Register';
 import useBalance from '@/hook/useBalance';
+import getAccountName from '@/hook/getAccountName';
 import { useAccount } from 'wagmi';
+import isAccount from '@/hook/isAccount';
 
 type ItemData = {
   id: number;
@@ -23,6 +26,8 @@ const ProductPage: React.FC = () => {
   const [addressFrom, setAddressFrom] = useState<string>('');
   const {address} = useAccount();
   const {data} = useBalance(address?address:"");
+  const {data:accountName} = getAccountName(address?address:"");
+  const {data:isRegister}=isAccount(address?address:"");
 
   const router = useRouter();
   const { id } = router.query;
@@ -88,8 +93,9 @@ const ProductPage: React.FC = () => {
               console.error(error);
               // Handle error or display an error message
             }
-      
+                
             router.push('/shop');
+            
         }
     };
 
@@ -127,30 +133,31 @@ const ProductPage: React.FC = () => {
       <div className='relative'>
         <Navbar />
         <div>
-          <p>Account : {address?(address as string):""}</p>
-          <p>Balance : {data?String(data as Number):""}</p>
+          {/* <p>Account : {address?(address as string):""}</p>
+          <p>Balance : {data?String(data as Number):""}</p> */}
         </div>
-        {product.map((p: ItemData) => {
-          return (
-            <div key={p.id} className="pt-[20px] flex flex-row justify-center items-center">
-              <Image className="mr-40" src={`${p.picture}`} width={600} height={600} alt={`${p.id}`} />
-              <div className="p-8 flex flex-col w-[600px] h-[750px] justify-center text-4xl text-left">
-                <h2 className="mb-4 font-bold">{p.name}</h2>
-                <p className="text-2xl mb-12 text-gray-500 font-semibold">{p.description}</p>
-                <p className="font-bold text-3xl mb-10">{p.cost} ETH</p>
-                <p className="text-3xl font-semibold text-gray-500 mb-4">Size : {p.size}</p>
-                <p className="text-3xl font-semibold text-gray-500 mb-4">Color : {p.color}</p>
-                <p className="text-3xl font-semibold text-gray-500 mb-20">Quantity : {p.quantity}</p>
-                <button
-                  onClick={showAlert}
-                  className="pt-4 pb-6 mx-20 rounded-3xl bg-black text-white font-bold"
-                >
-                  Buy
-                </button>
-              </div>
-            </div>
-          );
-        })}
+            {!isRegister && <Register/>}
+            {product.map((p: ItemData) => {
+            return (
+                <div key={p.id} className={`pt-[20px] ${isRegister?"flex":"hidden"} flex-row justify-center items-center `}>
+                <Image className="mr-40" src={`${p.picture}`} width={600} height={600} alt={`${p.id}`} />
+                <div className="p-8 flex flex-col w-[600px] h-[750px] justify-center text-4xl text-left">
+                    <h2 className="mb-4 font-bold">{p.name}</h2>
+                    <p className="text-2xl mb-12 text-gray-500 font-semibold">{p.description}</p>
+                    <p className="font-bold text-3xl mb-10">{p.cost} ETH</p>
+                    <p className="text-3xl font-semibold text-gray-500 mb-4">Size : {p.size}</p>
+                    <p className="text-3xl font-semibold text-gray-500 mb-4">Color : {p.color}</p>
+                    <p className="text-3xl font-semibold text-gray-500 mb-20">Quantity : {p.quantity}</p>
+                    <button
+                    onClick={showAlert}
+                    className="pt-4 pb-6 mx-20 rounded-3xl bg-black text-white font-bold"
+                    >
+                    Buy
+                    </button>
+                </div>
+                </div>
+            );
+            })}
         {showModal && (
           <div className="absolute flex items-center justify-center px-4 bottom-1/3 left-1/3 rounded-3xl w-[600px] h-[300px] bg-white border-black border-2">
             <Modal message="Fill your address to buy this product" onClose={closeModal} />

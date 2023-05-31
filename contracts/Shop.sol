@@ -12,20 +12,27 @@ contract Shop {
         accountName[msg.sender]=name;
     }
 
+    function isAccount(address _account) public view returns (bool) {
+        if (bytes(accountName[_account]).length>0) {
+            return true;
+        } 
+        return false;
+    }
+
     function getAccountName(address _account) public view returns (string memory){
         return accountName[_account];
     }
 
-    function deposit() public payable{
-        require(bytes(accountName[msg.sender]).length >0 ,"Error : Account nnot register");
-        accountBalance[msg.sender] += msg.value;
+    function deposit(uint256 _amount) public payable{
+        require(bytes(accountName[msg.sender]).length >0 ,"Error : Account not register");
+        accountBalance[msg.sender] += _amount;
     }
 
-    function withdraw() public {
+    function withdraw(uint256 _amount) public {
         require(accountBalance[msg.sender] > 0, "Error: Insufficient balance");
-        uint256 amount = accountBalance[msg.sender];
-        accountBalance[msg.sender] = 0;
-        payable(msg.sender).transfer(amount);
+        require(accountBalance[msg.sender>=_amount,"Error input]);
+        accountBalance[msg.sender] -= _amount;
+        payable(msg.sender).transfer(_amount);
     }
     
     function transferTo(address _to, uint256 _amount) public {
