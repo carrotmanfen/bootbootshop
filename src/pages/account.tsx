@@ -6,9 +6,6 @@ import getAccountName from '@/hook/getAccountName';
 import { useAccount } from 'wagmi';
 import useBalance from '@/hook/useBalance';
 import { useState } from 'react';
-import { disconnect } from '@wagmi/core'
- 
-
 
 function account() {
     const { address } = useAccount();
@@ -53,7 +50,7 @@ function account() {
                         <Button>Withdraw</Button>
                     </Link>
                     <Link href={'/register'} className={`${show?'hidden':'block'}`}>
-                        <Button>Register{'>'}</Button>
+                        <Button>Register</Button>
                     </Link>
                     <Link href={'/'}>
                         <Button>Go to home -{'>'}</Button>

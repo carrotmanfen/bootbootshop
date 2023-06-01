@@ -26,9 +26,10 @@ const ProductPage: React.FC = () => {
     const [productId, setProductId] = useState<string>('');
     const [addressFrom, setAddressFrom] = useState<string>('');
     const { address } = useAccount();
-    const { data } = useBalance(address ? address : "");
     const { data: accountName } = getAccountName(address ? address : "");
     const { data: isRegister } = isAccount(address ? address : "");
+    const { data:balance } = useBalance(address ? address : "");
+    const [accountBalance, setAccountBalance] = useState("")
     const _to = addressContract;
     const [amount, setAmount] = useState("");
     const { write: transfer, data: dataTransfer } = useTransfer(_to, amount);
@@ -53,6 +54,10 @@ const ProductPage: React.FC = () => {
             fetchProducts();
         }
     }, [id]);
+
+    useEffect(() => {
+        setAccountBalance(String(balance==undefined?"0.0000":balance));
+      }, [balance,accountBalance,accountName]);
 
     interface ModalProps {
         message: string;
@@ -139,6 +144,9 @@ const ProductPage: React.FC = () => {
         return (
             <div className='relative'>
                 <Navbar />
+                <div className="flex justify-end mr-16">
+                    <p className='text-2xl '>Account Balance : {String((parseFloat(accountBalance)/Math.pow(10,18)))} ETH</p>
+                </div>
                 {product.map((p: ItemData) => {
                     return (
                         <div key={p.id} className={`pt-[20px] flex flex-row justify-center items-center `}>
