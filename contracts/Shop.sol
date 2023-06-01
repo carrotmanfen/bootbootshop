@@ -32,11 +32,11 @@ contract Shop {
         accountBalance[msg.sender] += msg.value;
     }
 
-    function withdraw(uint256 _amount) public {
+   function withdraw() public {
         require(accountBalance[msg.sender] > 0, "Error: Insufficient balance");
-        require(accountBalance[msg.sender>=_amount,"Error input"]);
-        accountBalance[msg.sender] -= _amount;
-        payable(msg.sender).transfer(_amount);
+        uint256 amount = accountBalance[msg.sender];
+        accountBalance[msg.sender] = 0;
+        payable(msg.sender).transfer(amount);
     }
     
     function transferTo(address _to, uint256 _amount) public {
@@ -57,7 +57,7 @@ contract Shop {
     function deleteAccount() public {
         require(bytes(accountName[msg.sender]).length > 0, "Error Account not register");
         if(accountBalance[msg.sender] > 0){
-            withdraw(accountBalance[msg.sender]);
+            withdraw();
         }
         delete accountName[msg.sender];
     }

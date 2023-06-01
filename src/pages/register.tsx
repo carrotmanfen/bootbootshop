@@ -6,11 +6,13 @@ import { useState } from 'react';
 import createAccount from '@/hook/createAccount';
 import getAccountName from '@/hook/getAccountName';
 import { useRouter } from 'next/router';
+import isAccount from '@/hook/isAccount';
 
 function Register() {
     const router = useRouter();
     const [name, setName] = useState<string>("");
     const { address } = useAccount();
+    const { data: isRegister } = isAccount(address ? address : "");
     const { write: handleCreateAccount, data } = createAccount(name);
     const {data:accountName} = getAccountName(address?address:"");
     const [loading, setLoading] = useState(false);
@@ -44,8 +46,8 @@ function Register() {
     };
 
     const handleRegister = async () => {
-        if (address != undefined) {
-            if(accountName != undefined){
+        if (address) {
+            if(isRegister){
                 window.alert("You already have account");
             }else{
                 if (name.length > 0) {
@@ -68,7 +70,7 @@ function Register() {
                 Loading
             </div>
             <div className="relative flex flex-col items-center justify-center mt-16">
-                <div className='border-2 rounded-2xl bg-gray-200 flex flex-col items-center justify-center py-10 px-40'>
+                <div className='border-2 rounded-2xl bg-neutral-300 flex flex-col items-center justify-center py-10 px-40'>
                     <div className='text-3xl font-bold mb-8'>Register</div>
                     <div className='text-xl mb-6'>Please fill your name to register</div>
                     <input type="text"

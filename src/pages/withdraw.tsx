@@ -14,6 +14,9 @@ const Withdraw: React.FC = () => {
     const router = useRouter();
     const { address } = useAccount();
     const { data: accountName } = getAccountName(address ? address : "");
+    const { data: isRegister } = isAccount(address ? address : "");
+    const { data: balance } = useBalance(address ? address : "");
+    const [accountBalance, setAccountBalance] = useState("")
     const [amount, setAmount] = useState("");
     const { write: getMoneyOff, data: Money } = useWithdraw(amount);
     const [show, setShow] = useState(false);
@@ -27,31 +30,40 @@ const Withdraw: React.FC = () => {
         setLoading(false);
         router.push('/account')
     }
-    
-    useEffect(()=>{
-        if(waitForTransaction.isLoading == true) {
+
+    useEffect(() => {
+        if (waitForTransaction.isLoading == true) {
             setLoading(true);
-            
-        }else{
+
+        } else {
             setLoading(false);
         }
-    },[waitForTransaction.isLoading])
+    }, [waitForTransaction.isLoading])
 
     useEffect(() => {
         if (waitForTransaction.isSuccess) {
-          window.alert("Transaction successful");
-          successful();
+            window.alert("Transaction successful");
+            successful();
         }
-      }, [waitForTransaction.isSuccess]);
+    }, [waitForTransaction.isSuccess]);
 
     useEffect(() => {
-        if (accountName == undefined) {
-            setShow(false)
+        if (isRegister) {
+
+            if (accountName == undefined) {
+                setShow(false)
+            } else {
+                setShow(true)
+            }
         } else {
-            setShow(true)
+            setShow(false)
         }
 
-    }, [accountName]);
+    }, [isRegister]);
+
+    useEffect(() => {
+        setAccountBalance(String(balance == undefined ? "0.0000" : balance));
+    }, [balance, accountBalance, accountName]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setAmount(e.target.value);
@@ -63,7 +75,7 @@ const Withdraw: React.FC = () => {
 
             if (String(amount).length > 0) {
                 if (getMoneyOff) {
-                    setAmount(String(Number(amount) * Math.pow(10, 18)));
+                    setAmount(amount);
                     getMoneyOff();
 
                 }
@@ -80,13 +92,16 @@ const Withdraw: React.FC = () => {
     return (
         <>
             <Navbar />
-            <div className={`${loading?'flex text-3xl bg-neutral-300 py-4 font-semibold justify-center':'hidden'}`}>
+            <div className={`${loading ? 'flex text-3xl bg-neutral-300 py-4 font-semibold justify-center' : 'hidden'}`}>
                 Loading
+            </div>
+            <div className="flex justify-center">
+                <p className='text-2xl '>Account Balance : {String((parseFloat(accountBalance) / Math.pow(10, 18)))} ETH</p>
             </div>
             <div className={`flex justify-center items-center mt-8`}>
                 <div className={`${show ? 'hidden' : 'block'} `}>Please connect wallet and register</div>
                 <div className={`${show ? 'flex' : 'hidden'} relative flex flex-col items-center justify-center`}>
-                    <div className='border-2 rounded-2xl bg-gray-200 flex flex-col items-center justify-center py-10 px-40'>
+                    <div className='border-2 rounded-2xl bg-neutral-300 flex flex-col items-center justify-center py-10 px-40'>
                         <div className='text-3xl font-bold mb-8'>Withdraw Money</div>
                         {/* <p>{address?("Account : "+String(address) as string):"Please Connect Wallet"}</p> */}
                         <div className='text-xl mb-6'>Please fill ETH that you want to withdraw</div>

@@ -65,6 +65,13 @@
     },
     {
         "inputs": [],
+        "name": "deleteAccount",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "deposit",
         "outputs": [],
         "stateMutability": "payable",
@@ -127,7 +134,13 @@
         "type": "function"
     },
     {
-        "inputs": [],
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_amount",
+                "type": "uint256"
+            }
+        ],
         "name": "withdraw",
         "outputs": [],
         "stateMutability": "nonpayable",

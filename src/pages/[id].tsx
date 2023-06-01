@@ -57,7 +57,7 @@ const ProductPage: React.FC = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:3000/api/history/createHistory', { productId, addressFrom });
+            const response = await axios.post('http://localhost:3000/api/history/createHistory', { productId, addressFrom,accountName });
             console.log(response.data);
             // Handle success or display a success message
         } catch (error) {
