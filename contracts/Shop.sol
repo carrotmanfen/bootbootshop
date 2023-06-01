@@ -1,3 +1,7 @@
+/**
+ *Submitted for verification at Etherscan.io on 2023-05-29
+*/
+
 //SPDX-License-Identifier: Unlicense
 pragma solidity = 0.8.15;
 
@@ -23,14 +27,14 @@ contract Shop {
         return accountName[_account];
     }
 
-    function deposit(uint256 _amount) public payable{
+    function deposit() public payable{
         require(bytes(accountName[msg.sender]).length >0 ,"Error : Account not register");
-        accountBalance[msg.sender] += _amount;
+        accountBalance[msg.sender] += msg.value;
     }
 
     function withdraw(uint256 _amount) public {
         require(accountBalance[msg.sender] > 0, "Error: Insufficient balance");
-        require(accountBalance[msg.sender>=_amount,"Error input]);
+        require(accountBalance[msg.sender>=_amount,"Error input"]);
         accountBalance[msg.sender] -= _amount;
         payable(msg.sender).transfer(_amount);
     }
@@ -47,7 +51,15 @@ contract Shop {
     }
 
     function checkBalance() public view returns (uint256) {
-    return address(this).balance;
-}
+        return address(this).balance;
+    }
+
+    function deleteAccount() public {
+        require(bytes(accountName[msg.sender]).length > 0, "Error Account not register");
+        if(accountBalance[msg.sender] > 0){
+            withdraw(accountBalance[msg.sender]);
+        }
+        delete accountName[msg.sender];
+    }
 
 }

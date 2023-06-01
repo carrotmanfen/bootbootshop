@@ -6,18 +6,43 @@ import Navbar from "@/components/Nav";
 import useBalance from '@/hook/useBalance';
 import isAccount from "@/hook/isAccount";
 import getAccountName from '@/hook/getAccountName';
-import { useAccount } from 'wagmi';
-import useWithdraw from "@/hook/useWithdraw";
+import { useAccount, useWaitForTransaction } from 'wagmi';
+import useWithdraw from "@/hook/useWithdraw.js";
+import { useRouter } from "next/router";
 
 const Withdraw: React.FC = () => {
-
+    const router = useRouter();
     const { address } = useAccount();
-    const { data } = useBalance(address ? address : "");
     const { data: accountName } = getAccountName(address ? address : "");
-    const { data: isRegister } = isAccount(address ? address : "");
     const [amount, setAmount] = useState("");
-    const { write: getMoneyOff, data: Money } = useWithdraw();
+    const { write: getMoneyOff, data: Money } = useWithdraw(amount);
     const [show, setShow] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const waitForTransaction = useWaitForTransaction({
+        confirmations: 1,
+        hash: Money?.hash
+    });
+
+    const successful = () => {
+        setLoading(false);
+        router.push('/account')
+    }
+    
+    useEffect(()=>{
+        if(waitForTransaction.isLoading == true) {
+            setLoading(true);
+            
+        }else{
+            setLoading(false);
+        }
+    },[waitForTransaction.isLoading])
+
+    useEffect(() => {
+        if (waitForTransaction.isSuccess) {
+          window.alert("Transaction successful");
+          successful();
+        }
+      }, [waitForTransaction.isSuccess]);
 
     useEffect(() => {
         if (accountName == undefined) {
@@ -38,6 +63,7 @@ const Withdraw: React.FC = () => {
 
             if (String(amount).length > 0) {
                 if (getMoneyOff) {
+                    setAmount(String(Number(amount) * Math.pow(10, 18)));
                     getMoneyOff();
 
                 }
@@ -54,6 +80,9 @@ const Withdraw: React.FC = () => {
     return (
         <>
             <Navbar />
+            <div className={`${loading?'flex text-3xl bg-neutral-300 py-4 font-semibold justify-center':'hidden'}`}>
+                Loading
+            </div>
             <div className={`flex justify-center items-center mt-8`}>
                 <div className={`${show ? 'hidden' : 'block'} `}>Please connect wallet and register</div>
                 <div className={`${show ? 'flex' : 'hidden'} relative flex flex-col items-center justify-center`}>

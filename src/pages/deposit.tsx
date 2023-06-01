@@ -1,24 +1,38 @@
-import Link from "next/link";
 import { useState, useEffect } from "react";
 import React from "react";
-import Image from 'next/image';
 import Navbar from "@/components/Nav";
 import useBalance from '@/hook/useBalance';
 import isAccount from "@/hook/isAccount";
 import getAccountName from '@/hook/getAccountName';
-import { useAccount } from 'wagmi';
+import { useAccount,useWaitForTransaction } from 'wagmi';
 import useDeposit from "@/hook/useDeposit.js";
 
 
 const Deposit: React.FC = () => {
-
     const { address } = useAccount();
-    const { data } = useBalance(address ? address : "");
     const { data: accountName } = getAccountName(address ? address : "");
-    const { data: isRegister } = isAccount(address ? address : "");
     const [amount, setAmount] = useState("");
     const { write: addMoney, data: Money } = useDeposit(amount);
     const [show, setShow] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const waitForTransaction = useWaitForTransaction({
+        confirmations: 1,
+        hash: Money?.hash
+    });
+
+    const successful = () => {
+        setLoading(false);
+        window.location.reload()
+    }
+    
+    useEffect(()=>{
+        if(waitForTransaction.isLoading == true) {
+            setLoading(true);
+            
+        }else{
+            setLoading(false);
+        }
+    },[waitForTransaction.isLoading])
 
     useEffect(() => {
         if (accountName == undefined) {
@@ -33,16 +47,14 @@ const Deposit: React.FC = () => {
         setAmount(e.target.value);
     };
 
-    const handleDeposit = () => {
+    const handleDeposit = async () => {
 
         if (address != undefined) {
-
+            
             if (String(amount).length > 0) {
                 if (addMoney) {
-                    addMoney();
-
+                    await addMoney();
                 }
-                window.alert("add money");
             } else {
                 window.alert("Please fill your money");
             }
@@ -51,15 +63,24 @@ const Deposit: React.FC = () => {
         }
     }
 
+    useEffect(() => {
+        if (waitForTransaction.isSuccess) {
+          window.alert("Transaction successful");
+          successful();
+        }
+      }, [waitForTransaction.isSuccess]);
+
     return (
         <>
             <Navbar />
+            <div className={`${loading?'flex text-3xl bg-neutral-300 py-4 font-semibold justify-center':'hidden'}`}>
+                Loading
+            </div>
             <div className={`flex justify-center items-center mt-8`}>
                 <div className={`${show ? 'hidden' : 'block'} `}>Please connect wallet and register</div>
                 <div className={`${show ? 'flex' : 'hidden'} relative flex flex-col items-center justify-center`}>
                     <div className='border-2 rounded-2xl bg-gray-200 flex flex-col items-center justify-center py-10 px-40'>
                         <div className='text-3xl font-bold mb-8'>Add Money</div>
-                        {/* <p>{address?("Account : "+String(address) as string):"Please Connect Wallet"}</p> */}
                         <div className='text-xl mb-6'>Please fill ETH that you want to add</div>
                         <input type="number"
                             className='w-[300px] text-xl mb-6 border-2 rounded-xl px-4 py-2 '

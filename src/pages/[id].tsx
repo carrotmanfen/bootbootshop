@@ -5,7 +5,7 @@ import axios from 'axios';
 import Navbar from '@/components/Nav';
 import useBalance from '@/hook/useBalance';
 import getAccountName from '@/hook/getAccountName';
-import { useAccount } from 'wagmi';
+import { useAccount, useWaitForTransaction } from 'wagmi';
 import isAccount from '@/hook/isAccount';
 import useTransfer from '@/hook/useTransfer.js';
 import addressContract from "../../contracts/addressContract";
@@ -28,16 +28,60 @@ const ProductPage: React.FC = () => {
     const { address } = useAccount();
     const { data: accountName } = getAccountName(address ? address : "");
     const { data: isRegister } = isAccount(address ? address : "");
-    const { data:balance } = useBalance(address ? address : "");
+    const { data: balance } = useBalance(address ? address : "");
     const [accountBalance, setAccountBalance] = useState("")
+
+    // push address of shop to transfer
     const _to = addressContract;
+
     const [amount, setAmount] = useState("");
     const { write: transfer, data: dataTransfer } = useTransfer(_to, amount);
+    const [loading, setLoading] = useState(false);
+    const waitForTransaction = useWaitForTransaction({
+        confirmations: 1,
+        hash: dataTransfer?.hash
+    });
 
     const router = useRouter();
     const { id } = router.query;
 
-    console.log('id is' + String(id));
+    const successful = async () => {
+        setLoading(false);
+        try {
+            const response = await axios.put('http://localhost:3000/api/products/updateProduct', { productId });
+            console.log(response.data);
+            // Handle success or display a success message
+        } catch (error) {
+            console.error(error);
+            // Handle error or display an error message
+        }
+
+        try {
+            const response = await axios.post('http://localhost:3000/api/history/createHistory', { productId, addressFrom });
+            console.log(response.data);
+            // Handle success or display a success message
+        } catch (error) {
+            console.error(error);
+            // Handle error or display an error message
+        }
+        router.push('/');
+    }
+
+    useEffect(() => {
+        if (waitForTransaction.isLoading == true) {
+            setLoading(true);
+            setShowModal(false);
+        } else {
+            setLoading(false);
+        }
+    }, [waitForTransaction.isLoading])
+
+    useEffect(() => {
+        if (waitForTransaction.isSuccess) {
+            window.alert("Transaction successful");
+            successful();
+        }
+    }, [waitForTransaction.isSuccess]);
 
     const fetchProducts = async () => {
         const response = await fetch(`http://localhost:3000/api/products/${id}`);
@@ -45,7 +89,7 @@ const ProductPage: React.FC = () => {
         console.log('data is' + data);
         setProduct(data);
         setProductId(String(id));
-        setAmount(String(data[0].cost));
+        setAmount(String(data[0].cost * Math.pow(10, 18)));
         console.log(amount);
     };
 
@@ -56,8 +100,8 @@ const ProductPage: React.FC = () => {
     }, [id]);
 
     useEffect(() => {
-        setAccountBalance(String(balance==undefined?"0.0000":balance));
-      }, [balance,accountBalance,accountName]);
+        setAccountBalance(String(balance == undefined ? "0.0000" : balance));
+    }, [balance, accountBalance, accountName]);
 
     interface ModalProps {
         message: string;
@@ -68,7 +112,16 @@ const ProductPage: React.FC = () => {
     const inputRef = useRef<HTMLInputElement>(null); // Create a ref for the input field
 
     const showAlert = () => {
-        setShowModal(true);
+        if (address) {
+            if (isRegister) {
+
+                setShowModal(true);
+            } else {
+                window.alert("You don't have account please register first")
+            }
+        } else {
+            window.alert("Please Connect Wallet");
+        }
     };
 
     const closeModal = () => {
@@ -89,24 +142,7 @@ const ProductPage: React.FC = () => {
             } else {
                 if (transfer) {
                     transfer();
-                    try {
-                        const response = await axios.put('http://localhost:3000/api/products/updateProduct', { productId });
-                        console.log(response.data);
-                        // Handle success or display a success message
-                    } catch (error) {
-                        console.error(error);
-                        // Handle error or display an error message
-                    }
 
-                    try {
-                        const response = await axios.post('http://localhost:3000/api/history/createHistory', { productId, addressFrom });
-                        console.log(response.data);
-                        // Handle success or display a success message
-                    } catch (error) {
-                        console.error(error);
-                        // Handle error or display an error message
-                    }
-                    router.push('/');
                 }
             }
         };
@@ -144,8 +180,11 @@ const ProductPage: React.FC = () => {
         return (
             <div className='relative'>
                 <Navbar />
+                <div className={`${loading ? 'flex text-3xl bg-neutral-300 py-4 font-semibold justify-center' : 'hidden'}`}>
+                    Loading
+                </div>
                 <div className="flex justify-end mr-16">
-                    <p className='text-2xl '>Account Balance : {String((parseFloat(accountBalance)/Math.pow(10,18)))} ETH</p>
+                    <p className='text-2xl '>Account Balance : {String((parseFloat(accountBalance) / Math.pow(10, 18)))} ETH</p>
                 </div>
                 {product.map((p: ItemData) => {
                     return (

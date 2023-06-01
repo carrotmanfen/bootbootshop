@@ -1,16 +1,43 @@
 import React from 'react'
+import { useEffect } from 'react';
 import Navbar from '@/components/Nav'
-import { useAccount } from 'wagmi';
+import { useAccount,useWaitForTransaction } from 'wagmi';
 import { useState } from 'react';
 import createAccount from '@/hook/createAccount';
 import getAccountName from '@/hook/getAccountName';
+import { useRouter } from 'next/router';
 
 function Register() {
+    const router = useRouter();
     const [name, setName] = useState<string>("");
     const { address } = useAccount();
     const { write: handleCreateAccount, data } = createAccount(name);
     const {data:accountName} = getAccountName(address?address:"");
+    const [loading, setLoading] = useState(false);
+    const waitForTransaction = useWaitForTransaction({
+        confirmations: 1,
+        hash: data?.hash
+    });
 
+    const successful = () => {
+        setLoading(false);
+        router.push('/account');
+    }
+
+    useEffect(()=>{
+        if(waitForTransaction.isLoading == true) {
+            setLoading(true);    
+        }else{
+            setLoading(false);
+        }
+    },[waitForTransaction.isLoading])
+
+    useEffect(() => {
+        if (waitForTransaction.isSuccess) {
+          window.alert("Transaction successful");
+          successful();
+        }
+      }, [waitForTransaction.isSuccess]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value);
@@ -37,6 +64,9 @@ function Register() {
     return (
         <div>
             <Navbar />
+            <div className={`${loading?'flex text-3xl bg-neutral-300 py-4 font-semibold justify-center':'hidden'}`}>
+                Loading
+            </div>
             <div className="relative flex flex-col items-center justify-center mt-16">
                 <div className='border-2 rounded-2xl bg-gray-200 flex flex-col items-center justify-center py-10 px-40'>
                     <div className='text-3xl font-bold mb-8'>Register</div>
