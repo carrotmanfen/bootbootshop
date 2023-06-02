@@ -18,6 +18,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/hook/useDeposit.js", "src/hook/useTranfer.ts", "src/hook/useWaitForTransaction.js", "src/hook/useWithdraw.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/hook/useDeposit.js", "src/hook/useTranfer.ts", "src/hook/useWaitForTransaction.js", "src/hook/useWithdraw.ts"],
   "exclude": ["node_modules"]
 }

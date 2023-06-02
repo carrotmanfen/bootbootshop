@@ -3,13 +3,11 @@ import ShopABI from "../abis/Shop.json"
 import addressContract from "../../contracts/addressContract";
 import { parseEther } from "viem";
 
-const useWithdraw = (amount)=>{
-    const _amount = String(Number(amount)*Math.pow(10,18));
+const useWithdraw = ()=>{
     const {config} = usePrepareContractWrite({
         address:addressContract,
         abi: ShopABI,
         functionName:"withdraw",
-        args:[parseEther(_amount, 18)]
        
     });
 

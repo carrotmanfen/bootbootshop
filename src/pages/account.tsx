@@ -10,13 +10,14 @@ import { useState } from 'react';
 import Router, { useRouter } from 'next/router';
 import isAccount from '@/hook/isAccount';
 import Register from './register';
+import axios from 'axios';
 
 type historyData = {
-    historyId:number;
-    productId:number;
-    addressFrom:string;
-    accountName:string;
- }
+    history_id: number;
+    product_id: number;
+    address: string;
+    contract_name: string;
+}
 
 function account() {
     const router = useRouter();
@@ -26,7 +27,7 @@ function account() {
     const { data: isRegister } = isAccount(address ? address : "");
     const [accountName, setAccountName] = useState("Connect Wallet")
     const [accountBalance, setAccountBalance] = useState("")
-    const [history,setHistory] = useState<historyData[]>([]);
+    const [history, setHistory] = useState<historyData[]>([]);
     const [show, setShow] = useState(false);
     const { write: deleteAccount, data: deleteData } = useDeleteAccount();
     const [loading, setLoading] = useState(false);
@@ -39,31 +40,31 @@ function account() {
         setLoading(false);
         router.push('/register')
     }
-    
-    useEffect(()=>{
-        if(waitForTransaction.isLoading == true) {
+
+    useEffect(() => {
+        if (waitForTransaction.isLoading == true) {
             setLoading(true);
-            
-        }else{
+
+        } else {
             setLoading(false);
         }
-    },[waitForTransaction.isLoading])
+    }, [waitForTransaction.isLoading])
 
     useEffect(() => {
         if (waitForTransaction.isSuccess) {
-          window.alert("Transaction successful");
-          successful();
+            window.alert("Transaction successful");
+            successful();
         }
-      }, [waitForTransaction.isSuccess]);
+    }, [waitForTransaction.isSuccess]);
 
     const handleDeleteAccount = async () => {
         if (address != undefined) {
-            if(isRegister){
+            if (isRegister) {
 
                 if (deleteAccount) {
                     await deleteAccount();
                 }
-            }else{
+            } else {
                 window.alert("Account not register");
             }
 
@@ -73,40 +74,55 @@ function account() {
     }
 
     useEffect(() => {
-        if(isRegister){
+        if (isRegister) {
 
             setAccountBalance(String(balance == undefined ? "0.0000" : balance));
             setAccountName(String(name == undefined ? "Connect Wallet" : name));
-            
+
             if (name == undefined) {
                 setShow(false)
             } else {
                 setShow(true)
+                // fetchHistory();
             }
-        }else{
+        } else {
             setShow(false)
+            setHistory([]);
         }
 
-    }, [isRegister,name,address]);
+    }, [isRegister, name, address]);
 
     const fetchHistory = async () => {
-        const response = await fetch(`http://localhost:3000/api/history/name?name=${String(name)}`);
-        const data = await response.json();
-        setHistory(data);
-        console.log('data is' + name);
-        console.log('data is' + data);
+        axios.get('http://localhost:3000/api/history/name', {
+            params: {
+                name: name
+            }
+        })
+            .then(response => {
+                // Process the received data
+                setHistory(response.data)
+                console.log(history);``
+                console.log(response.data);``
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     };
 
     useEffect(() => {
-        if (name) {
+        if(name){
+
+            console.log('fetch data here' + name)
             fetchHistory();
         }
+
     }, [name]);
 
     return (
         <div>
             <Navbar />
-            <div className={`${loading?'flex text-3xl bg-neutral-300 py-4 font-semibold justify-center':'hidden'}`}>
+            
+            <div className={`${loading ? 'flex text-3xl bg-neutral-300 py-4 font-semibold justify-center' : 'hidden'}`}>
                 Loading
             </div>
             <div className='flex flex-col justify-center items-center'>
@@ -142,15 +158,25 @@ function account() {
                         Delete Account
                     </button>
                 </div>
-                {/* {history.map((h:historyData)=>{
-                    return(
-                        <div className='flex flex-col text-black' key={h.historyId}>
-                            <p>{h.productId}</p>
-                            <p>{h.addressFrom}</p>
+                <div className={`${show?'flex':'hidden'}`}>
+
+                    <div className={`flex flex-col justify-between mt-16`}>
+                        <p className='text-center text-3xl font-bold mb-8'>History</p>
+                        <div className='flex flex-row text-black  border-2 text-2xl font-semibold bg-neutral-300'>
+                            <p className='flex flex-1 text-center items-center justify-center border-r-2 p-2'>product_id</p>
+                            <p className='flex flex-1 text-center items-center justify-center p-2'>address</p>
                         </div>
-                    )
-                })} */}
+                        {history.map((h: historyData) => {
+                            return (
+                                <div className='flex flex-row justify-between text-black border-l-2 border-r-2 border-b-2 text-2xl ' key={h.history_id}>
+                                    <p className='flex flex-1 text-center items-center justify-center border-r-2 p-2 truncate overflow-hidden'>{h.product_id}</p>
+                                    <p className='flex flex-1 text-center items-center justify-center p-2 break-words'>{h.address}</p>
+                                </div>
+                            )
+                        })}
+                    </div>
                 </div>
+            </div>
         </div>
     )
 }
