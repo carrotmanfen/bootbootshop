@@ -32,7 +32,7 @@ const ProductPage: React.FC = () => {
     const [accountBalance, setAccountBalance] = useState("")
 
     // push address of shop to transfer
-    const _to = addressContract;
+    const _to = "0x3AaEe3cF4DefAb8D33d2961fc7b7e50fFfa5817C";
 
     const [amount, setAmount] = useState("");
     const { write: transfer, data: dataTransfer } = useTransfer(_to, amount);
